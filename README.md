@@ -8,13 +8,16 @@ Experimental project, implementation of forward multihead attention pass in sing
 Attention mechanism is widely used in contemprorary large language models  (BERT, GPT, LLaMA, etc) as well as in some computer vision networks (like ViT and similar). It is a main part of the transformer architecture, in which almost half of the layers are attention layers. So optimizing one could give an opportunity to make large transformers faster (and reduce heat and CO2 emission). Usualy we calculate multihead attention as follows:
 
 $$Q = XW_q; ~K = XW_k; ~V = XW_v$$
+
 $$S_h = \text{softmax}\left( \frac{Q_hK_h^T}{\sqrt H} \right), ~h = 1\dots R$$
+
 $$Y_h = S_hV_h$$
+
 $$Z = YW_o$$
 
 Here 
 * $L$ is sequence length (or set size), $F$ is number of features, $R$ is number of heads in multihead attention, $H$ is number of features in the single head; $H \times R = F$
-* $X \in \mathbb{R}^{L \times F}$ &mdash; the input matrix; 
+* $X \in \mathbb{R}^{L \times F}$ &mdash; the input matrix
 * $W_q, W_k, W_v, W_o \in \mathbb{R}^{F \times F}$ &mdash; query, keys, values and output weight matrices
 * $Q_h, K_h, V_h, Y_h \in \mathbb{R}^{L \times H}$ &mdash; submatrices of $Q, K, V, Y$, so-called heads 
 * $S_h \in \mathbb{R}^{L \times L}$ &mdash; attention scores for the single head 
@@ -48,7 +51,7 @@ $$\sum_{i=1}^N \exp(s_i)v_i = \exp(s_{\max})\sum_{i=1}^N \exp(s_i - s_{\max})v_i
 
 which is up to indices resembles the numerator in the formula above.
 
-Suppose we have 2 sets of numbers: $a_{1\dots N}$ and $b_{1\dots M}$, and we have precalculated values sums-of-exponents of them, represented as pairs $(a_{\max}, a_{\text{sum}}), (b_{\max}, b_{\text{sum}})$, then we can represent the sum:
+Suppose we have 2 sets of numbers: $a_{1\dots N}$ and $b_{1\dots M}$, and we have precalculated sums-of-exponents of them, represented as pairs $(a_{\max}, a_{\text{sum}}), (b_{\max}, b_{\text{sum}})$, then we can represent the sum:
 $\sum_{i = 1\dots N} \exp(a_i) + \sum_{j=1\dots M} \exp(b_j)$ as the pair of numbers $(c_{\max}, c_{\text{sum}})$, where
 $$c_{\max} = \max(a_{\max}, b_{max})$$
 $$c_{\text{sum}} = \exp(a_{\max} - c_{\max})a_{\text{sum}} + \exp(b_{\max} - c_{\max})b_{\text{sum}}$$
