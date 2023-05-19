@@ -104,9 +104,8 @@ Following implementation was tested against the pytorch naive impementation, and
 ```bash
 $ python -m unittest
 ```
-Also the algorithm was tested in perfomance on the simple benchmark on the **NVIDIA GeForce RTX 3050 Laptop** on the random tensors with the following parameters:
+Also the algorithm was tested in perfomance on the simple benchmark on the **NVIDIA GeForce RTX 3050 Laptop** and **NVIDIA A100-PCIE-40GB** on the random tensors (values are from standard normal distribution) with the following parameters:
 ```
-batch_size=4 
 sequence_len=2048
 feature_size=5120
 head_dim=128
@@ -115,17 +114,22 @@ num_heads=40
 ```
 The results of the benchmark are in the table below
 
-| Algorithm       | Time per batch | Coef | Additional memory[^3] |
-|-----------------|---------------:|-----:|----------------------:|
-| Naive attention | 83.4 ms        | 1.00 | 1280 Mb               |
-| Fused attention | 58.6 ms        | 0.70 | 0 Mb                  |
+| GPU      | Batch size | Algorithm       | Time per batch | Speedup[^3] | Additional memory[^4] |
+|----------|------------|-----------------|---------------:|------------:|----------------------:|
+| RTX 3050 | 4          | Naive           |        83.4 ms |           - |               1280 Mb |
+|          |            | Fused           |        58.6 ms |         42% |                  0 Mb |
+| A100     | 4          | Naive           |        14.6 ms |           - |               1280 Mb |
+|          |            | Fused           |         6.2 ms |        138% |                  0 Mb |
+| A100     | 16         | Naive           |        41.7 ms |           - |               5120 Mb |
+|          |            | Fused           |        23.4 ms |         76% |                  0 Mb |
 
 ## Further improvements
 
 This project was done j4f, in a several weekends. The idea just came to my mind and I was haunted by an obsessive thought to try to implement it and to measure how much perfomance will be. Now, when my interest has been satisfied for a while, I am not sure, if I will continue this little project but if somebody (includes me) will be interested in future improvemns, here is check list what could also be done:
 
 - [x] implement fused forward layer
-- [ ] run benchmarks on the different gpu archetictures, check the perfomance gain on the high-end gpu
+- [x] run benchmarks on the different gpu archetictures, check the perfomance gain on the high-end gpu
+- [ ] perform full benchmark analysis on different parameters, add some visualization
 - [ ] create a wrapper for this layer (add input/output linear layers) in pytorch
 - [ ] implement a fused input (linear qkv layers + optional rotational encodings for queries and keys) and fused output (linear output layer + residual connection + normalization) to increase the perfomance of the whole attention block
 - [ ] save scores tensor in fused layer for backward pass. It will be slower but allow us to obtain a trainable attention which is yet little bit faster then naive approach.
@@ -138,4 +142,6 @@ This project was done j4f, in a several weekends. The idea just came to my mind 
 
 [^2]: Typicaly head dim `H` is one of $64$ or $128$. 
 
-[^3]: Memory used in attention function calculation to store score tensor if using half precision, qkv and output tensors are not considered there.
+[^3]: Speedup calculated as (time_naive / time_fused - 1) * 100%, and shows how much of perfomance (batches / ms) gained relative to the naive implementation (so the 0% speedup is the same, 100% speedup is twice faster and so on).
+
+[^4]: Memory used in attention function calculation to store score tensor if using half precision, qkv and output tensors are not considered there.
