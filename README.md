@@ -119,9 +119,9 @@ The results of the benchmark are in the table below
 | RTX 3050 | 4          | Naive           |        83.4 ms |           - |               1280 Mb |
 |          |            | Fused           |        58.6 ms |         42% |                  0 Mb |
 | A100     | 4          | Naive           |        14.6 ms |           - |               1280 Mb |
-|          |            | Fused           |         6.2 ms |        138% |                  0 Mb |
+|          |            | Fused           |         6.2 ms |        135% |                  0 Mb |
 | A100     | 16         | Naive           |        41.7 ms |           - |               5120 Mb |
-|          |            | Fused           |        23.4 ms |         76% |                  0 Mb |
+|          |            | Fused           |        23.4 ms |         78% |                  0 Mb |
 
 ## Further improvements
 
