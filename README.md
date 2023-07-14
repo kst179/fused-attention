@@ -62,11 +62,17 @@ $$Y_{ij} = \frac{\cancel{\exp(\max_l (\hat{S}\_{il}))} \sum_{l = 1\dots L} \exp 
 
 ## Backward
 $$\hat{S} = \frac{1}{\sqrt{H}}QK^T$$
+
 $$S = \frac{\exp(\hat{S} - s_{\max})}{S_{\text{sum}}}$$
+
 $$dS = dY V^T$$
-$$d\hat{S}_{ij} = S_{ij} \left(dS_{ij} - \sum_{j'} S_{ij'} dS_{ij'}\right)$$
+
+$$d\hat{S}\_{ij} = S_{ij} \left(dS_{ij} - \sum_{j'} S_{ij'} dS_{ij'}\right)$$
+
 $$dV = S^T dY$$
+
 $$dK = \frac{1}{\sqrt{H}}d\hat{S}^TQ$$
+
 $$dQ = \frac{1}{\sqrt{H}}d\hat{S}K$$
 
 ## Installation
