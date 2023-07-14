@@ -36,10 +36,16 @@ try_run(
     RUN_OUTPUT_VARIABLE compute_capabilities
 )
 
-message(STATUS "Found architecture: ${compute_capabilities}")
+if(compute_capabilities STREQUAL "") 
+    message(FATAL_ERROR "CUDA compatible GPU is not found")
+elseif(compute_capabilities LESS 70)
+    message(FATAL_ERROR "Found CUDA architecture: ${compute_capabilities}, but it is less then 70, which is minimal needed")
+else()
+    message(STATUS "Found CUDA architecture: ${compute_capabilities}")
+endif()
 
 # Set the CUDA architecture to compile for
-set(CUDA_ARCH compute_capabilities)
+set(CUDA_ARCH ${compute_capabilities})
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=compute_${compute_capabilities} -code=sm_${compute_capabilities} -g -G")
 
 # Add the CUDA include directories
@@ -48,7 +54,7 @@ include_directories(include ${CUDA_INCLUDE_DIRS})
 # Add the CUDA source files
 add_executable(
     test
-    src/test.cu
+    cuda_fused_attention/test.cu
 )
 
 # Set the CUDA architecture for the target

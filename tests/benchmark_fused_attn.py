@@ -1,7 +1,7 @@
 import torch
 import time
 
-import fused_attn
+import fused_attention
 
 from naive_implementation import attention
 
@@ -35,7 +35,7 @@ def bench():
 
     start = time.time()
     for _ in range(num_batchs):
-        _ = fused_attn.attention_forward(head_dim, chunk_size, queries, keys, values)
+        _ = fused_attention.attention_forward(head_dim, chunk_size, queries, keys, values)
     torch.cuda.synchronize()
     end = time.time()
 

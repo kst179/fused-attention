@@ -1,9 +1,9 @@
 import unittest
 import torch
-import fused_attn
+import fused_attention
 import os
 
-from naive_implementation import attention
+from tests.naive_implementation import attention
 
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 
@@ -25,7 +25,7 @@ class TestFusedAttn(unittest.TestCase):
         values = torch.randn(batch_size, sequence_len, num_features, device="cuda")
 
         expected = attention(queries, keys, values, head_dim)
-        actual = fused_attn.attention_forward(head_dim, chunk_size, queries, keys, values)
+        actual, = fused_attention.attention_forward(head_dim, chunk_size, queries, keys, values, inference=True)
 
         torch.testing.assert_close(actual, expected, rtol=0.01, atol=0.01)  # tolerance is smaller than default values because of the half precision
 

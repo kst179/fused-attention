@@ -60,6 +60,15 @@ Using this idea we can calculate numericaly stable representations of numerator/
 
 $$Y_{ij} = \frac{\cancel{\exp(\max_l (\hat{S}\_{il}))} \sum_{l = 1\dots L} \exp (\hat{S}\_{il} - \max_l (\hat{S}\_{il})) V_{lj}}{\cancel{\exp(\max_l (\hat{S}\_{il}))}\sum_{l = 1\dots L}\exp(\hat{S}\_{il} - \max_l (\hat{S}\_{il}))} $$
 
+## Backward
+$$\hat{S} = \frac{1}{\sqrt{H}}QK^T$$
+$$S = \frac{\exp(\hat{S} - s_{\max})}{S_{\text{sum}}}$$
+$$dS = dY V^T$$
+$$d\hat{S}_{ij} = S_{ij} \left(dS_{ij} - \sum_{j'} S_{ij'} dS_{ij'}\right)$$
+$$dV = S^T dY$$
+$$dK = \frac{1}{\sqrt{H}}d\hat{S}^TQ$$
+$$dQ = \frac{1}{\sqrt{H}}d\hat{S}K$$
+
 ## Installation
 
 Impemented function can be used as a torch extention or can be added to CUDA/C++ program directly, by including `include/fused_attn.cuh` file into the project.
@@ -69,7 +78,7 @@ Minimal dependencies are [**pytorch**](https://pytorch.org/get-started/locally/)
 To install it as torch extention use:
 
 ```bash
-$ python setup.py install --user
+$ pip install -e .
 ```
 
 Then you can use the extention in following way:
