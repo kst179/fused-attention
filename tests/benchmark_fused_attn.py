@@ -1,9 +1,10 @@
-import torch
 import time
+
+import torch
+from naive_implementation import attention
 
 import fused_attention
 
-from naive_implementation import attention
 
 def bench():
     batch_size = 4
@@ -13,7 +14,7 @@ def bench():
     num_features = num_heads * head_dim
     sequence_len = 2048
     num_batchs = 128
-    
+
     torch.random.manual_seed(179)
 
     torch.set_default_tensor_type(torch.cuda.HalfTensor)
@@ -21,7 +22,7 @@ def bench():
     keys = torch.randn(batch_size, sequence_len, num_features, device="cuda")
     values = torch.randn(batch_size, sequence_len, num_features, device="cuda")
 
-    time.sleep(10) # cooldown gpu after tensors' initialization
+    time.sleep(10)  # cooldown gpu after tensors' initialization
 
     start = time.time()
     for i in range(num_batchs):
@@ -31,11 +32,13 @@ def bench():
 
     naive_ms = (end - start) / num_batchs * 1000
 
-    time.sleep(20) # cooldown gpu after calculations
+    time.sleep(20)  # cooldown gpu after calculations
 
     start = time.time()
     for _ in range(num_batchs):
-        _ = fused_attention.attention_forward(head_dim, chunk_size, queries, keys, values)
+        _ = fused_attention.attention_forward(
+            head_dim, chunk_size, queries, keys, values
+        )
     torch.cuda.synchronize()
     end = time.time()
 
@@ -43,6 +46,7 @@ def bench():
 
     print(f"Naive {naive_ms:.4f} ms")
     print(f"Fused {fused_ms:.4f} ms")
+
 
 if __name__ == "__main__":
     bench()
